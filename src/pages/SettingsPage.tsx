@@ -4,14 +4,17 @@ import type { AISettings } from '@/types'; // Import AISettings type
 import AISettingsForm from '@/components/features/settings/AISettingsForm'; // Uncommented
 import AISettingsList from '@/components/features/settings/AISettingsList'; // Uncommented
 import { Button } from '@/components/ui/button'; // Assuming Button is already added via Shadcn
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Palette } from 'lucide-react';
 import RoleEditor from '@/components/features/settings/RoleEditor'; // Added import
 import TagEditor from '@/components/features/settings/TagEditor';   // Added import
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { useTheme } from '@/hooks/useTheme';
 
 const SettingsPage: React.FC = () => {
   const { loadSettings, settings, activeSettingsId, isLoading, error } = useAISettingsStore();
   const [showForm, setShowForm] = useState(false);
   const [editingSetting, setEditingSetting] = useState<AISettings | undefined>(undefined);
+  const { theme } = useTheme();
 
   // Compute current settings from the active setting ID
   const currentSettings = settings.find(setting => setting.id === activeSettingsId) || null;
@@ -35,9 +38,37 @@ const SettingsPage: React.FC = () => {
     setEditingSetting(undefined);
   };
 
+  const getThemeDisplayName = (theme: string) => {
+    switch (theme) {
+      case 'light': return 'Светлая тема';
+      case 'dark': return 'Тёмная тема';
+      case 'system': return 'Системная тема';
+      default: return 'Неизвестно';
+    }
+  };
+
   return (
     <div className="space-y-8 p-4 md:p-6"> {/* Added padding and increased spacing */}
       <h1 className="text-3xl font-bold">Settings</h1>
+      
+      {/* Theme Settings Section */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Palette className="h-5 w-5" />
+          <h2 className="text-2xl font-semibold">Настройки темы</h2>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Настройте внешний вид приложения. Текущая тема: <span className="font-medium">{getThemeDisplayName(theme)}</span>
+        </p>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <span className="text-sm text-muted-foreground">
+            Выберите светлую, тёмную тему или следуйте системным настройкам
+          </span>
+        </div>
+      </section>
+
+      <hr className="my-6" />
       
       <section className="space-y-4">
         <div className="flex justify-between items-center">

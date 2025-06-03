@@ -1,5 +1,5 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { db } from './lib/db' // Import to initialize
@@ -18,8 +18,27 @@ if (import.meta.env.DEV) {
   });
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+// Initialize theme before React renders to prevent flash
+const initializeTheme = () => {
+  const stored = localStorage.getItem('theme');
+  const theme = stored && ['light', 'dark', 'system'].includes(stored) ? stored : 'system';
+  
+  const root = document.documentElement;
+  root.classList.remove('light', 'dark');
+  
+  if (theme === 'system') {
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    root.classList.add(systemTheme);
+  } else {
+    root.classList.add(theme);
+  }
+};
+
+// Apply theme immediately
+initializeTheme();
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
     <App />
-  </React.StrictMode>,
+  </StrictMode>,
 )
