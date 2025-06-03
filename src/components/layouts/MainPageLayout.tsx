@@ -4,8 +4,13 @@ import TagList from '../features/main/TagList';
 import SystemPromptComposer from '../features/main/SystemPromptComposer';
 import DialogControls from '../features/main/DialogControls';
 import ChatInterface from '../features/main/ChatInterface';
+import SavedDialogsModal from '../features/main/SavedDialogsModal';
+import { useUIStateStore } from '@/stores/uiStateStore';
 
 const MainPageLayout: React.FC = () => {
+  const activeModal = useUIStateStore(state => state.activeModal);
+  const setActiveModal = useUIStateStore(state => state.setActiveModal);
+
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-background text-foreground">
       {/* Left Column */}
@@ -34,6 +39,12 @@ const MainPageLayout: React.FC = () => {
         <h2 className="text-lg font-semibold mb-4 sticky top-0 bg-muted/80 dark:bg-muted/60 backdrop-blur-sm py-2 z-10">Tags</h2>
         <TagList />
       </div>
+
+      {/* Modals */}
+      <SavedDialogsModal 
+        open={activeModal === 'savedDialogs'} 
+        onOpenChange={(open) => setActiveModal(open ? 'savedDialogs' : null)}
+      />
     </div>
   );
 };
